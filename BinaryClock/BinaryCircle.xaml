@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="BinaryClock.BinaryCircle"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:BinaryClock"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="40"
+             d:DesignWidth="40"
+             mc:Ignorable="d">
+    <Grid>
+        <Ellipse x:Name="cirOuter"
+                 Width="40"
+                 Height="40"
+                 Fill="Gray" />
+        <Ellipse x:Name="cirMid"
+                 Width="30"
+                 Height="30"
+                 Fill="Black" />
+    </Grid>
+</UserControl>
