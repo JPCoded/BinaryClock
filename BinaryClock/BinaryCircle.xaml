@@ -8,11 +8,21 @@
              d:DesignWidth="40"
              mc:Ignorable="d">
     <Grid>
-        <Ellipse x:Name="cirOuter"
+        <Ellipse x:Name="CirOuter"
                  Width="40"
-                 Height="40"
-                 Fill="Gray" />
-        <Ellipse x:Name="cirMid"
+                 Height="40">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Offset="0.87" Color="#FFB8B8B8" />
+                    <GradientStop Offset="0.95" Color="#FF858585" />
+                    <GradientStop Color="#FF858585" />
+                    <GradientStop Offset="0.2" Color="#FF858585" />
+                    <GradientStop Offset="0.8" Color="#FF919191" />
+                    <GradientStop Offset="0.903" Color="#FFA4A4A4" />
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse x:Name="CirMid"
                  Width="30"
                  Height="30"
                  Fill="Black" />

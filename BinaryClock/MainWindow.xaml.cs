@@ -1,9 +1,7 @@
 ﻿#region
 
 using System;
-using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -16,52 +14,91 @@ namespace BinaryClock
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly Control[] _hours;
-        private readonly Control[] _minutes;
-        private readonly Control[] _seconds;
-        readonly DispatcherTimer _timer = new DispatcherTimer();
+        private int _previousSec = -1;
+        private int previousHour = -1;
+        private int previousMin = -1;
+        private readonly BinaryCircle[] _hours;
+        private readonly BinaryCircle[] _minutes;
+        private readonly RadialGradientBrush _radialGradientBlack = new RadialGradientBrush();
+        private readonly RadialGradientBrush _radialGradientGreen = new RadialGradientBrush();
+        private readonly BinaryCircle[] _seconds;
+        private readonly DispatcherTimer _timer = new DispatcherTimer();
+
         public MainWindow()
         {
             InitializeComponent();
-          
-            _hours = new Control[] {cirHour1, cirHour2, cirHour3, cirHour4, cirHour5};
-            _minutes = new Control[] {cirMin1,cirMin2,cirMin3,cirMin4,cirMin5,cirMin6};
-            _seconds = new Control[] {cirSec1,cirSec2,cirSec3,cirSec4,cirSec5,cirSec6};
+            _radialGradientGreen.GradientStops.Add(new GradientStop(Color.FromRgb(0, 162, 14), 0.0));
+            _radialGradientGreen.GradientStops.Add(new GradientStop(Color.FromRgb(0, 100, 7), 0.95));
+
+            _radialGradientBlack.GradientStops.Add(new GradientStop(Color.FromRgb(50, 50, 50), 0.0));
+            _radialGradientBlack.GradientStops.Add(new GradientStop(Color.FromRgb(0, 0, 0), 0.95));
+            _hours = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
+            _minutes = new[] {CirMin1, CirMin2, CirMin3, CirMin4, CirMin5, CirMin6};
+            _seconds = new[] {CirSec1, CirSec2, CirSec3, CirSec4, CirSec5, CirSec6};
             _timer.Tick += Timer_Tick;
-            _timer.Interval = new TimeSpan(0,0,1);
+            _timer.Interval = new TimeSpan(0, 0, 1);
             _timer.Start();
- 
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            var hour = Convert.ToString(DateTime.Now.Hour, 2).PadLeft(5,'0').ToCharArray();
-            var min = Convert.ToString(DateTime.Now.Minute, 2).PadLeft(6, '0').ToCharArray();
-            var sec = Convert.ToString(DateTime.Now.Second, 2).PadLeft(6, '0').ToCharArray();
+            var currentHour = DateTime.Now.Hour;
+            var currentSec = DateTime.Now.Second;
+            var currentMin = DateTime.Now.Minute;
+
+            if (previousHour != currentHour)
+            {
+                previousHour = currentHour;
+                CycleHour(currentHour);
+            }
+
+            if (previousMin != currentMin)
+            {
+                previousMin = currentMin;
+                CycleMinute(currentMin);
+            }
+
+            if (_previousSec != currentSec)
+            {
+                _previousSec = currentSec;
+                CycleSecond(currentSec);
+            }
+        }
+
+        private void CycleHour(int currentHour)
+        {
+            var hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray();
             var hourTick = 0;
-            var secTick = 0;
-            var minTick = 0;
             foreach (var val in hour)
             {
-               
-               var temp =  (BinaryCircle) _hours[hourTick];
-                temp.SetFill = val == '1' ? Brushes.Green : Brushes.Black;
+                _hours[hourTick].CirMid.Fill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
+
                 hourTick++;
             }
+        }
+
+        private void CycleMinute(int currentMin)
+        {
+            var min = Convert.ToString(currentMin, 2).PadLeft(6, '0').ToCharArray();
+            var minTick = 0;
             foreach (var val in min)
             {
-                var temp = (BinaryCircle)_minutes[minTick];
-                temp.SetFill = val == '1' ? Brushes.Green : Brushes.Black;
+                _minutes[minTick].SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
+
                 minTick++;
             }
+        }
+
+        private void CycleSecond(int currentSec)
+        {
+            var sec = Convert.ToString(currentSec, 2).PadLeft(6, '0').ToCharArray();
+            var secTick = 0;
 
             foreach (var val in sec)
             {
-                var temp = (BinaryCircle)_seconds[secTick];
-                temp.SetFill = val == '1' ? Brushes.Green : Brushes.Black;
+                _seconds[secTick].SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
                 secTick++;
             }
-         
         }
     }
 }

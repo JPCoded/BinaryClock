@@ -19,7 +19,14 @@ namespace BinaryClock
 
         public Brush SetFill
         {
-            set { cirMid.Fill = value; }
+            set { CirMid.Fill = value; }
+            get { return CirMid.Fill; }
+        }
+
+        public Brush FillRing
+        {
+            set { CirOuter.Fill = value; }
+            get { return CirOuter.Fill; }
         }
     }
 }
