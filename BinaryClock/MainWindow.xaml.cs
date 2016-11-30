@@ -15,8 +15,8 @@ namespace BinaryClock
     public partial class MainWindow : Window
     {
         private int _previousSec = -1;
-        private int previousHour = -1;
-        private int previousMin = -1;
+        private int _previousHour = -1;
+        private int _previousMin = -1;
         private readonly BinaryCircle[] _hours;
         private readonly BinaryCircle[] _minutes;
         private readonly RadialGradientBrush _radialGradientBlack = new RadialGradientBrush();
@@ -46,15 +46,15 @@ namespace BinaryClock
             var currentSec = DateTime.Now.Second;
             var currentMin = DateTime.Now.Minute;
 
-            if (previousHour != currentHour)
+            if (_previousHour != currentHour)
             {
-                previousHour = currentHour;
+                _previousHour = currentHour;
                 CycleHour(currentHour);
             }
 
-            if (previousMin != currentMin)
+            if (_previousMin != currentMin)
             {
-                previousMin = currentMin;
+                _previousMin = currentMin;
                 CycleMinute(currentMin);
             }
 
