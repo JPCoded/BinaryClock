@@ -7,13 +7,21 @@
         Title="Binary Clock"
         Width="307.537"
         Height="205.882"
+        Background="White"
         mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary x:Name="RadialGradient" Source="RadialGradients.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
+
         <local:BinaryCircle x:Name="CirHour1"
                             Margin="9,10,0,0"
                             HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            SetFill="Black" />
+                            VerticalAlignment="Top" />
         <local:BinaryCircle x:Name="CirHour2"
                             Margin="54,10,0,0"
                             HorizontalAlignment="Left"

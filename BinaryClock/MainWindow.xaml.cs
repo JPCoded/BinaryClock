@@ -16,22 +16,21 @@ namespace BinaryClock
     {
         private int _previousSec = -1;
         private int _previousHour = -1;
-        private int _previousMin = -1;
+        private int previousMin = -1;
         private readonly BinaryCircle[] _hours;
         private readonly BinaryCircle[] _minutes;
-        private readonly RadialGradientBrush _radialGradientBlack = new RadialGradientBrush();
-        private readonly RadialGradientBrush _radialGradientGreen = new RadialGradientBrush();
+        private readonly RadialGradientBrush _radialGradientBlack;
+        private readonly RadialGradientBrush _radialGradientGreen;
         private readonly BinaryCircle[] _seconds;
         private readonly DispatcherTimer _timer = new DispatcherTimer();
 
         public MainWindow()
         {
             InitializeComponent();
-            _radialGradientGreen.GradientStops.Add(new GradientStop(Color.FromRgb(0, 162, 14), 0.0));
-            _radialGradientGreen.GradientStops.Add(new GradientStop(Color.FromRgb(0, 100, 7), 0.95));
 
-            _radialGradientBlack.GradientStops.Add(new GradientStop(Color.FromRgb(50, 50, 50), 0.0));
-            _radialGradientBlack.GradientStops.Add(new GradientStop(Color.FromRgb(0, 0, 0), 0.95));
+            _radialGradientGreen = FindResource("RadialGradientGreen") as RadialGradientBrush;
+            _radialGradientBlack = FindResource("RadialGradientBlack") as RadialGradientBrush;
+
             _hours = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
             _minutes = new[] {CirMin1, CirMin2, CirMin3, CirMin4, CirMin5, CirMin6};
             _seconds = new[] {CirSec1, CirSec2, CirSec3, CirSec4, CirSec5, CirSec6};
@@ -52,9 +51,9 @@ namespace BinaryClock
                 CycleHour(currentHour);
             }
 
-            if (_previousMin != currentMin)
+            if (previousMin != currentMin)
             {
-                _previousMin = currentMin;
+                previousMin = currentMin;
                 CycleMinute(currentMin);
             }
 
