@@ -2,6 +2,7 @@
 
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -19,9 +20,12 @@ namespace BinaryClock
         private int _previousMin = -1;
         private readonly BinaryCircle[] _hours;
         private readonly BinaryCircle[] _minutes;
+        private readonly BinaryCircle[] _seconds;
+
+        private Control[] _binaryLabels;
         private readonly RadialGradientBrush _radialGradientBlack;
         private readonly RadialGradientBrush _radialGradientGreen;
-        private readonly BinaryCircle[] _seconds;
+     
         private readonly DispatcherTimer _timer = new DispatcherTimer();
 
         public MainWindow()
@@ -34,6 +38,7 @@ namespace BinaryClock
             _hours = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
             _minutes = new[] {CirMin1, CirMin2, CirMin3, CirMin4, CirMin5, CirMin6};
             _seconds = new[] {CirSec1, CirSec2, CirSec3, CirSec4, CirSec5, CirSec6};
+            _binaryLabels = new Control[] {lblH1,lblH2,lblH3,lblH4,lblH5,lblM1,lblM2,lblM3,lblM4,lblM5,lblM6,lblS1,lblS2,lblS3,lblS4,lblS5,lblS6};
             _timer.Tick += Timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 1);
             _timer.Start();
