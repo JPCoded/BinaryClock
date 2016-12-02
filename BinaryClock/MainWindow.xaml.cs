@@ -14,8 +14,8 @@ namespace BinaryClock
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int _previousSec = -1;
         private int _previousHour = -1;
+        private int _previousSec = -1;
         private int previousMin = -1;
         private readonly BinaryCircle[] _hours;
         private readonly BinaryCircle[] _minutes;
@@ -41,20 +41,21 @@ namespace BinaryClock
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            var currentHour = DateTime.Now.Hour;
             var currentSec = DateTime.Now.Second;
             var currentMin = DateTime.Now.Minute;
 
-            if (_previousHour != currentHour)
-            {
-                _previousHour = currentHour;
-                CycleHour(currentHour);
-            }
 
             if (previousMin != currentMin)
             {
+                var currentHour = DateTime.Now.Hour;
                 previousMin = currentMin;
                 CycleMinute(currentMin);
+
+                if (_previousHour != currentHour)
+                {
+                    _previousHour = currentHour;
+                    CycleHour(currentHour);
+                }
             }
 
             if (_previousSec != currentSec)
