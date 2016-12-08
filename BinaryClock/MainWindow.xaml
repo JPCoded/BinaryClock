@@ -88,13 +88,6 @@
                             Margin="234,118,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top" />
-        <GroupBox x:Name="GrpOptions"
-                  Width="96"
-                  Height="85"
-                  Margin="292,10,52,91"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"
-                  Header="Options" />
         <Label x:Name="lblH1"
                Margin="202,45,0,0"
                HorizontalAlignment="Left"
@@ -214,6 +207,18 @@
                Content="32"
                FontSize="8"
                FontWeight="Bold" />
+        <CheckBox x:Name="ChkHideNum"
+                  Margin="304,21,39,0"
+                  VerticalAlignment="Top"
+                  Checked="chkHideNum_Checked"
+                  Content="Hide Numbers"
+                  Unchecked="chkHideNum_Unchecked" />
+        <CheckBox x:Name="ChkTwelveHour"
+                  Margin="304,40,39,0"
+                  VerticalAlignment="Top"
+                  Checked="ChkTwelveHour_Checked"
+                  Content="Hide Numbers"
+                  Unchecked="ChkTwelveHour_Unchecked" />
 
     </Grid>
 </Window>
