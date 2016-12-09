@@ -219,6 +219,21 @@
                   Checked="ChkTwelveHour_Checked"
                   Content="12-Hour"
                   Unchecked="ChkTwelveHour_Unchecked" />
+        <Label x:Name="lblAMPM"
+               Margin="235,13,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="AM"
+               FontFamily="Courier New"
+               FontSize="24"
+               FontWeight="Bold">
+            <Label.Foreground>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0" Color="Black" />
+                    <GradientStop Offset="1" Color="#FF26A800" />
+                </LinearGradientBrush>
+            </Label.Foreground>
+        </Label>
 
     </Grid>
 </Window>

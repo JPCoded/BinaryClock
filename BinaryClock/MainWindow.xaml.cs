@@ -79,13 +79,15 @@ namespace BinaryClock
             char[] hour;
             if (ChkTwelveHour.IsChecked == true)
             {
+                lblAMPM.Content = currentHour >= 12 ? "PM" : "AM";
                 currentHour = currentHour > 12 ? currentHour - 12 : currentHour;
                 hour = Convert.ToString(currentHour, 2).PadLeft(4, '0').ToCharArray();
+                lblAMPM.Visibility = Visibility.Visible;
             }
             else
             {
                 
-            
+            lblAMPM.Visibility = Visibility.Hidden;
             hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray();
             }
             var hourTick = 0;
