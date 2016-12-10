@@ -20,7 +20,7 @@ namespace BinaryClock
         private int _previousSec = -1;
         private int _previousMin = -1;
         private readonly BinaryCircle[] _hours;
-        private readonly BinaryCircle[] _twelveHours;
+        private  BinaryCircle[] _twelveHours;
         private readonly BinaryCircle[] _minutes;
         private readonly BinaryCircle[] _seconds;
 
@@ -38,7 +38,6 @@ namespace BinaryClock
             _radialGradientBlack = FindResource("RadialGradientBlack") as RadialGradientBrush;
 
             _hours = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
-            _twelveHours = new [] { CirHour1, CirHour2, CirHour3, CirHour4};
             _minutes = new[] {CirMin1, CirMin2, CirMin3, CirMin4, CirMin5, CirMin6};
             _seconds = new[] {CirSec1, CirSec2, CirSec3, CirSec4, CirSec5, CirSec6};
             _binaryLabels = new Control[] {lblH1,lblH2,lblH3,lblH4,lblH5,lblM1,lblM2,lblM3,lblM4,lblM5,lblM6,lblS1,lblS2,lblS3,lblS4,lblS5,lblS6};
@@ -77,21 +76,21 @@ namespace BinaryClock
         {
             // redo most of this to make it just better;
             char[] hour;
+            lblAMPM.Visibility = ChkTwelveHour.IsChecked == true ? Visibility.Visible : Visibility.Hidden;
             if (ChkTwelveHour.IsChecked == true)
             {
                 lblAMPM.Content = currentHour >= 12 ? "PM" : "AM";
                 currentHour = currentHour > 12 ? currentHour - 12 : currentHour;
                 hour = Convert.ToString(currentHour, 2).PadLeft(4, '0').ToCharArray();
-                lblAMPM.Visibility = Visibility.Visible;
+               _twelveHours = _hours.SkipWhile(element => ReferenceEquals(element, CirHour5)).ToArray(); 
             }
             else
-            {
-                
-            lblAMPM.Visibility = Visibility.Hidden;
+            { 
             hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray();
             }
+
             var hourTick = 0;
-           
+          
             foreach (var val in hour)
             {
                 if (ChkTwelveHour.IsChecked == true)
