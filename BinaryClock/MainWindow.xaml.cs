@@ -19,10 +19,10 @@ namespace BinaryClock
         private int _previousHour = -1;
         private int _previousSec = -1;
         private int _previousMin = -1;
-        private readonly BinaryCircle[] _hours;
+        private readonly BinaryCircles _hours = new BinaryCircles();
         private  BinaryCircle[] _twelveHours;
-        private readonly BinaryCircle[] _minutes;
-        private readonly BinaryCircle[] _seconds;
+        private readonly BinaryCircles _minutes = new BinaryCircles();
+        private readonly BinaryCircles _seconds = new BinaryCircles();
 
         private readonly Control[] _binaryLabels;
         private readonly RadialGradientBrush _radialGradientBlack;
@@ -37,9 +37,9 @@ namespace BinaryClock
             _radialGradientGreen = FindResource("RadialGradientGreen") as RadialGradientBrush;
             _radialGradientBlack = FindResource("RadialGradientBlack") as RadialGradientBrush;
 
-            _hours = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
-            _minutes = new[] {CirMin1, CirMin2, CirMin3, CirMin4, CirMin5, CirMin6};
-            _seconds = new[] {CirSec1, CirSec2, CirSec3, CirSec4, CirSec5, CirSec6};
+            _hours.Circles = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
+            _minutes.Circles = new[] {CirMin1, CirMin2, CirMin3, CirMin4, CirMin5, CirMin6};
+            _seconds.Circles = new[] {CirSec1, CirSec2, CirSec3, CirSec4, CirSec5, CirSec6};
             _binaryLabels = new Control[] {lblH1,lblH2,lblH3,lblH4,lblH5,lblM1,lblM2,lblM3,lblM4,lblM5,lblM6,lblS1,lblS2,lblS3,lblS4,lblS5,lblS6};
             _timer.Tick += Timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 1);
@@ -76,17 +76,18 @@ namespace BinaryClock
         {
             // redo most of this to make it just better;
             char[] hour;
+            _hours.Reset();
             lblAMPM.Visibility = ChkTwelveHour.IsChecked == true ? Visibility.Visible : Visibility.Hidden;
             if (ChkTwelveHour.IsChecked == true)
             {
                 lblAMPM.Content = currentHour >= 12 ? "PM" : "AM";
                 currentHour = currentHour > 12 ? currentHour - 12 : currentHour;
                 hour = Convert.ToString(currentHour, 2).PadLeft(4, '0').ToCharArray();
-               _twelveHours = _hours.SkipWhile(element => ReferenceEquals(element, CirHour5)).ToArray(); 
+               _twelveHours = _hours.Circles.SkipWhile(element => ReferenceEquals(element, CirHour5)).ToArray(); 
             }
             else
             { 
-            hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray();
+            hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray(); 
             }
 
             var hourTick = 0;
@@ -97,33 +98,32 @@ namespace BinaryClock
                 {
                     _twelveHours[hourTick].CirMid.Fill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
                 }
-                _hours[hourTick].CirMid.Fill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
+                _hours.Next().CirMid.Fill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
 
                 hourTick++;
             }
+           
         }
 
         private void CycleMinute(int currentMin)
         {
             var min = Convert.ToString(currentMin, 2).PadLeft(6, '0').ToCharArray();
-            var minTick = 0;
+            _minutes.Reset();
             foreach (var val in min)
             {
-                _minutes[minTick].SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
-
-                minTick++;
-            }
+                _minutes.Next().SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
+            }  
         }
 
         private void CycleSecond(int currentSec)
         {
             var sec = Convert.ToString(currentSec, 2).PadLeft(6, '0').ToCharArray();
-            var secTick = 0;
-
+            _seconds.Reset();
+            
             foreach (var val in sec)
             {
-                _seconds[secTick].SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
-                secTick++;
+                _seconds.Next().SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
+              
             }
         }
 

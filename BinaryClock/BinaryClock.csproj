@@ -70,6 +70,7 @@
     <Compile Include="BinaryCircle.xaml.cs">
       <DependentUpon>BinaryCircle.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BinaryCircles.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
