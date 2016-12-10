@@ -76,7 +76,6 @@ namespace BinaryClock
         {
             // redo most of this to make it just better;
             char[] hour;
-            _hours.Reset();
             lblAMPM.Visibility = ChkTwelveHour.IsChecked == true ? Visibility.Visible : Visibility.Hidden;
             if (ChkTwelveHour.IsChecked == true)
             {
@@ -108,7 +107,7 @@ namespace BinaryClock
         private void CycleMinute(int currentMin)
         {
             var min = Convert.ToString(currentMin, 2).PadLeft(6, '0').ToCharArray();
-            _minutes.Reset();
+ 
             foreach (var val in min)
             {
                 _minutes.Next().SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
@@ -118,8 +117,7 @@ namespace BinaryClock
         private void CycleSecond(int currentSec)
         {
             var sec = Convert.ToString(currentSec, 2).PadLeft(6, '0').ToCharArray();
-            _seconds.Reset();
-            
+  
             foreach (var val in sec)
             {
                 _seconds.Next().SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;

@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BinaryClock
+﻿namespace BinaryClock
 {
-    class BinaryCircles
+    internal class BinaryCircles
     {
         public BinaryCircle[] Circles { get; set; }
         private int CurrentPosition { get; set; }
 
         public BinaryCircle Next()
         {
+            if (CurrentPosition >= Circles.Length)
+            {
+                CurrentPosition = 0;
+            }
             var current = Circles[CurrentPosition];
             CurrentPosition++;
             return current;
         }
-
 
         public void Reset()
         {
