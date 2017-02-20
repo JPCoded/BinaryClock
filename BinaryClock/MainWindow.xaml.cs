@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,20 +15,18 @@ namespace BinaryClock
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private int _previousHour = -1;
-        private int _previousSec = -1;
         private int _previousMin = -1;
-        private readonly BinaryCircles _hours = new BinaryCircles();
-        private  BinaryCircle[] _twelveHours;
-        private readonly BinaryCircles _minutes = new BinaryCircles();
-        private readonly BinaryCircles _seconds = new BinaryCircles();
-
+        private int _previousSec = -1;
+        private BinaryCircle[] _twelveHours;
         private readonly Control[] _binaryLabels;
+        private readonly BinaryCircles _hours = new BinaryCircles();
+        private readonly BinaryCircles _minutes = new BinaryCircles();
         private readonly RadialGradientBrush _radialGradientBlack;
         private readonly RadialGradientBrush _radialGradientGreen;
-     
+        private readonly BinaryCircles _seconds = new BinaryCircles();
         private readonly DispatcherTimer _timer = new DispatcherTimer();
 
         public MainWindow()
@@ -40,7 +39,13 @@ namespace BinaryClock
             _hours.Circles = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
             _minutes.Circles = new[] {CirMin1, CirMin2, CirMin3, CirMin4, CirMin5, CirMin6};
             _seconds.Circles = new[] {CirSec1, CirSec2, CirSec3, CirSec4, CirSec5, CirSec6};
-            _binaryLabels = new Control[] {lblH1,lblH2,lblH3,lblH4,lblH5,lblM1,lblM2,lblM3,lblM4,lblM5,lblM6,lblS1,lblS2,lblS3,lblS4,lblS5,lblS6};
+            _minutes.AutoReset = true;
+            _seconds.AutoReset = true;
+            _binaryLabels = new Control[]
+            {
+                lblH1, lblH2, lblH3, lblH4, lblH5, lblM1, lblM2, lblM3, lblM4, lblM5, lblM6, lblS1, lblS2, lblS3, lblS4,
+                lblS5, lblS6
+            };
             _timer.Tick += Timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 1);
             _timer.Start();
@@ -50,7 +55,7 @@ namespace BinaryClock
         {
             var currentSec = DateTime.Now.Second;
             var currentMin = DateTime.Now.Minute;
-            
+
 
             if (_previousMin != currentMin)
             {
@@ -76,21 +81,23 @@ namespace BinaryClock
         {
             // redo most of this to make it just better;
             char[] hour;
+            _hours.Reset();
             lblAMPM.Visibility = ChkTwelveHour.IsChecked == true ? Visibility.Visible : Visibility.Hidden;
+
             if (ChkTwelveHour.IsChecked == true)
             {
                 lblAMPM.Content = currentHour >= 12 ? "PM" : "AM";
                 currentHour = currentHour > 12 ? currentHour - 12 : currentHour;
                 hour = Convert.ToString(currentHour, 2).PadLeft(4, '0').ToCharArray();
-               _twelveHours = _hours.Circles.SkipWhile(element => ReferenceEquals(element, CirHour5)).ToArray(); 
+                _twelveHours = _hours.Circles.SkipWhile(element => ReferenceEquals(element, CirHour5)).ToArray();
             }
             else
-            { 
-            hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray(); 
+            {
+                hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray();
             }
 
             var hourTick = 0;
-          
+
             foreach (var val in hour)
             {
                 if (ChkTwelveHour.IsChecked == true)
@@ -101,43 +108,56 @@ namespace BinaryClock
 
                 hourTick++;
             }
-           
         }
 
         private void CycleMinute(int currentMin)
         {
             var min = Convert.ToString(currentMin, 2).PadLeft(6, '0').ToCharArray();
- 
+
             foreach (var val in min)
             {
                 _minutes.Next().SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
-            }  
+            }
         }
 
         private void CycleSecond(int currentSec)
         {
             var sec = Convert.ToString(currentSec, 2).PadLeft(6, '0').ToCharArray();
-  
+
             foreach (var val in sec)
             {
                 _seconds.Next().SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
-              
             }
         }
 
         private void chkHideNum_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (var lab in _binaryLabels)
+            foreach (var lbl in FindLogicalChildren<Label>(mainWindow).Where(lbl => lbl.Name != "lblAMPM"))
             {
-                lab.Visibility = Visibility.Visible;
+                lbl.Visibility = Visibility.Visible;
             }
         }
 
         private void chkHideNum_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (var lab in _binaryLabels)
+            foreach (var lbl in FindLogicalChildren<Label>(mainWindow).Where(lbl => lbl.Name != "lblAMPM"))
             {
-                lab.Visibility = Visibility.Hidden;
+                lbl.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private static IEnumerable<T> FindLogicalChildren<T>(DependencyObject obj) where T : DependencyObject
+        {
+            if (obj != null)
+            {
+                if (obj is T)
+                    yield return (T) obj;
+
+                foreach (
+                    var c in
+                        LogicalTreeHelper.GetChildren(obj).OfType<DependencyObject>().SelectMany(FindLogicalChildren<T>)
+                    )
+                    yield return c;
             }
         }
 
@@ -151,8 +171,6 @@ namespace BinaryClock
             lblH4.Content = "4";
             lblH3.Content = "2";
             lblH2.Content = "1";
-
-
         }
 
         private void ChkTwelveHour_Unchecked(object sender, RoutedEventArgs e)

@@ -4,10 +4,11 @@
     {
         public BinaryCircle[] Circles { get; set; }
         private int CurrentPosition { get; set; }
+        public bool AutoReset { private get; set; }
 
         public BinaryCircle Next()
         {
-            if (CurrentPosition >= Circles.Length)
+            if (CurrentPosition >= Circles.Length && AutoReset)
             {
                 CurrentPosition = 0;
             }
