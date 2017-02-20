@@ -20,13 +20,13 @@ namespace BinaryClock
         private int _previousHour = -1;
         private int _previousMin = -1;
         private int _previousSec = -1;
-        private BinaryCircle[] _twelveHours;
-        private readonly BinaryCircles _hours = new BinaryCircles();
+
         private readonly IEnumerable<BinaryCircle> _minutes;
         //  private readonly BinaryCircles _minutes = new BinaryCircles();
         private readonly RadialGradientBrush _radialGradientBlack;
         private readonly RadialGradientBrush _radialGradientGreen;
         private readonly IEnumerable<BinaryCircle> _seconds;
+        private readonly IEnumerable<BinaryCircle> _hours; 
         //  private readonly BinaryCircles _seconds = new BinaryCircles();
         private readonly DispatcherTimer _timer = new DispatcherTimer();
 
@@ -38,7 +38,8 @@ namespace BinaryClock
             _radialGradientBlack = FindResource("RadialGradientBlack") as RadialGradientBrush;
             _seconds = FindLogicalChildren<BinaryCircle>(mainWindow).Where(lbl => lbl.Name.StartsWith("CirSec"));
             _minutes = FindLogicalChildren<BinaryCircle>(mainWindow).Where(lbl => lbl.Name.StartsWith("CirMin"));
-            _hours.Circles = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
+            _hours = FindLogicalChildren<BinaryCircle>(mainWindow).Where(lbl => lbl.Name.StartsWith("CirHour"));
+           
 
             _timer.Tick += Timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 1);
@@ -75,33 +76,25 @@ namespace BinaryClock
         {
             // redo most of this to make it just better;
             char[] hour;
-            _hours.Reset();
+          
             lblAMPM.Visibility = ChkTwelveHour.IsChecked == true ? Visibility.Visible : Visibility.Hidden;
-
+            var hourEnum = ChkTwelveHour.IsChecked ==  true? _hours.SkipWhile(element => ReferenceEquals(element, CirHour5)).GetEnumerator():_hours.GetEnumerator();
             if (ChkTwelveHour.IsChecked == true)
             {
                 lblAMPM.Content = currentHour >= 12 ? "PM" : "AM";
                 currentHour = currentHour > 12 ? currentHour - 12 : currentHour;
                 hour = Convert.ToString(currentHour, 2).PadLeft(4, '0').ToCharArray();
-
-                _twelveHours = _hours.Circles.SkipWhile(element => ReferenceEquals(element, CirHour5)).ToArray();
             }
             else
             {
                 hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray();
             }
 
-            var hourTick = 0;
-
             foreach (var val in hour)
             {
-                if (ChkTwelveHour.IsChecked == true)
-                {
-                    _twelveHours[hourTick].CirMid.Fill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
-                }
-                _hours.Next().CirMid.Fill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
-
-                hourTick++;
+                hourEnum.MoveNext();
+                hourEnum.Current.SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
+               
             }
         }
 
