@@ -21,13 +21,14 @@ namespace BinaryClock
         private int _previousMin = -1;
         private int _previousSec = -1;
         private BinaryCircle[] _twelveHours;
-        private readonly Control[] _binaryLabels;
+ 
         private readonly BinaryCircles _hours = new BinaryCircles();
         private readonly BinaryCircles _minutes = new BinaryCircles();
         private readonly RadialGradientBrush _radialGradientBlack;
         private readonly RadialGradientBrush _radialGradientGreen;
-        private readonly BinaryCircles _seconds = new BinaryCircles();
+      //  private readonly BinaryCircles _seconds = new BinaryCircles();
         private readonly DispatcherTimer _timer = new DispatcherTimer();
+        private IEnumerable<BinaryCircle> _seconds;
 
         public MainWindow()
         {
@@ -35,17 +36,11 @@ namespace BinaryClock
 
             _radialGradientGreen = FindResource("RadialGradientGreen") as RadialGradientBrush;
             _radialGradientBlack = FindResource("RadialGradientBlack") as RadialGradientBrush;
-
+           _seconds = FindLogicalChildren<BinaryCircle>(mainWindow).Where(lbl => lbl.Name.StartsWith("CirSec"));
+   
             _hours.Circles = new[] {CirHour1, CirHour2, CirHour3, CirHour4, CirHour5};
             _minutes.Circles = new[] {CirMin1, CirMin2, CirMin3, CirMin4, CirMin5, CirMin6};
-            _seconds.Circles = new[] {CirSec1, CirSec2, CirSec3, CirSec4, CirSec5, CirSec6};
             _minutes.AutoReset = true;
-            _seconds.AutoReset = true;
-            _binaryLabels = new Control[]
-            {
-                lblH1, lblH2, lblH3, lblH4, lblH5, lblM1, lblM2, lblM3, lblM4, lblM5, lblM6, lblS1, lblS2, lblS3, lblS4,
-                lblS5, lblS6
-            };
             _timer.Tick += Timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 1);
             _timer.Start();
@@ -89,6 +84,7 @@ namespace BinaryClock
                 lblAMPM.Content = currentHour >= 12 ? "PM" : "AM";
                 currentHour = currentHour > 12 ? currentHour - 12 : currentHour;
                 hour = Convert.ToString(currentHour, 2).PadLeft(4, '0').ToCharArray();
+                
                 _twelveHours = _hours.Circles.SkipWhile(element => ReferenceEquals(element, CirHour5)).ToArray();
             }
             else
@@ -123,11 +119,13 @@ namespace BinaryClock
         private void CycleSecond(int currentSec)
         {
             var sec = Convert.ToString(currentSec, 2).PadLeft(6, '0').ToCharArray();
-
+            var secEnum = _seconds.GetEnumerator();
             foreach (var val in sec)
             {
-                _seconds.Next().SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
+                secEnum.MoveNext();
+               secEnum.Current.SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;    
             }
+           
         }
 
         private void chkHideNum_Unchecked(object sender, RoutedEventArgs e)
@@ -177,7 +175,7 @@ namespace BinaryClock
         {
             CycleHour(DateTime.Now.Hour);
             CirHour5.Visibility = Visibility.Visible;
-            lblH1.Visibility = Visibility.Visible;
+           // lblH1.Visibility = Visibility.Visible;
             //eventually change to just loop over controls and programmaticly change 
             lblH5.Content = "16";
             lblH4.Content = "8";
