@@ -211,9 +211,8 @@
         <CheckBox x:Name="ChkHideNum"
                   Margin="300,13,43,0"
                   VerticalAlignment="Top"
-                  Checked="chkHideNum_Checked"
-                  Content="Hide Numbers"
-                  Unchecked="chkHideNum_Unchecked" />
+                  Click="ChkHideNum_Click"
+                  Content="Hide Numbers" />
         <CheckBox x:Name="ChkTwelveHour"
                   Margin="300,32,43,0"
                   VerticalAlignment="Top"

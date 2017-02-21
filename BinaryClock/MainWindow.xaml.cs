@@ -20,14 +20,13 @@ namespace BinaryClock
         private int _previousHour = -1;
         private int _previousMin = -1;
         private int _previousSec = -1;
-
+        private bool _hideNum;
+        private readonly IEnumerable<BinaryCircle> _hours;
         private readonly IEnumerable<BinaryCircle> _minutes;
-        //  private readonly BinaryCircles _minutes = new BinaryCircles();
         private readonly RadialGradientBrush _radialGradientBlack;
         private readonly RadialGradientBrush _radialGradientGreen;
         private readonly IEnumerable<BinaryCircle> _seconds;
-        private readonly IEnumerable<BinaryCircle> _hours; 
-        //  private readonly BinaryCircles _seconds = new BinaryCircles();
+        private readonly IEnumerable<Label> _hourLabels; 
         private readonly DispatcherTimer _timer = new DispatcherTimer();
 
         public MainWindow()
@@ -36,11 +35,10 @@ namespace BinaryClock
 
             _radialGradientGreen = FindResource("RadialGradientGreen") as RadialGradientBrush;
             _radialGradientBlack = FindResource("RadialGradientBlack") as RadialGradientBrush;
-            _seconds = FindLogicalChildren<BinaryCircle>(mainWindow).Where(lbl => lbl.Name.StartsWith("CirSec"));
-            _minutes = FindLogicalChildren<BinaryCircle>(mainWindow).Where(lbl => lbl.Name.StartsWith("CirMin"));
-            _hours = FindLogicalChildren<BinaryCircle>(mainWindow).Where(lbl => lbl.Name.StartsWith("CirHour"));
-           
-
+            _seconds = FindLogicalChildren<BinaryCircle>(mainWindow).Where(cir => cir.Name.StartsWith("CirSec"));
+            _minutes = FindLogicalChildren<BinaryCircle>(mainWindow).Where(cir => cir.Name.StartsWith("CirMin"));
+            _hours = FindLogicalChildren<BinaryCircle>(mainWindow).Where(cir => cir.Name.StartsWith("CirHour"));
+            _hourLabels = FindLogicalChildren<Label>(mainWindow).Where(lbl => lbl.Name.StartsWith("lblH")).SkipWhile(element => ReferenceEquals(element, lblH1)); 
             _timer.Tick += Timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 1);
             _timer.Start();
@@ -76,9 +74,11 @@ namespace BinaryClock
         {
             // redo most of this to make it just better;
             char[] hour;
-          
+
             lblAMPM.Visibility = ChkTwelveHour.IsChecked == true ? Visibility.Visible : Visibility.Hidden;
-            var hourEnum = ChkTwelveHour.IsChecked ==  true? _hours.SkipWhile(element => ReferenceEquals(element, CirHour5)).GetEnumerator():_hours.GetEnumerator();
+            var hourEnum = ChkTwelveHour.IsChecked == true
+                ? _hours.SkipWhile(element => ReferenceEquals(element, CirHour5)).GetEnumerator()
+                : _hours.GetEnumerator();
             if (ChkTwelveHour.IsChecked == true)
             {
                 lblAMPM.Content = currentHour >= 12 ? "PM" : "AM";
@@ -94,7 +94,6 @@ namespace BinaryClock
             {
                 hourEnum.MoveNext();
                 hourEnum.Current.SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
-               
             }
         }
 
@@ -120,21 +119,9 @@ namespace BinaryClock
             }
         }
 
-        private void chkHideNum_Unchecked(object sender, RoutedEventArgs e)
-        {
-            foreach (var lbl in FindLogicalChildren<Label>(mainWindow).Where(lbl => lbl.Name != "lblAMPM"))
-            {
-                lbl.Visibility = Visibility.Visible;
-            }
-        }
+  
 
-        private void chkHideNum_Checked(object sender, RoutedEventArgs e)
-        {
-            foreach (var lbl in FindLogicalChildren<Label>(mainWindow).Where(lbl => lbl.Name != "lblAMPM"))
-            {
-                lbl.Visibility = Visibility.Hidden;
-            }
-        }
+
 
         private static IEnumerable<T> FindLogicalChildren<T>(DependencyObject obj) where T : DependencyObject
         {
@@ -156,23 +143,44 @@ namespace BinaryClock
             CycleHour(DateTime.Now.Hour);
             CirHour5.Visibility = Visibility.Hidden;
             lblH1.Visibility = Visibility.Hidden;
-            //eventually change to just loop over controls and programmaticly change 
-            lblH5.Content = "8";
-            lblH4.Content = "4";
-            lblH3.Content = "2";
-            lblH2.Content = "1";
+            var startNum = 1;
+    foreach (var lbl in _hourLabels)
+            {
+                lbl.Content = startNum;
+                startNum *= 2;
+            }
+
         }
 
         private void ChkTwelveHour_Unchecked(object sender, RoutedEventArgs e)
         {
             CycleHour(DateTime.Now.Hour);
             CirHour5.Visibility = Visibility.Visible;
-            // lblH1.Visibility = Visibility.Visible;
-            //eventually change to just loop over controls and programmaticly change 
-            lblH5.Content = "16";
-            lblH4.Content = "8";
-            lblH3.Content = "4";
-            lblH2.Content = "2";
+             lblH1.Visibility = Visibility.Visible;
+            var startNum = 2;
+            foreach (var lbl in _hourLabels)
+            {
+                lbl.Content = startNum;
+                startNum *= 2;
+            }
+        }
+
+        private void TwelveHours(bool isTwelveHours)
+        {
+            CycleHour(DateTime.Now.Hour);
+            CirHour5.Visibility = isTwelveHours? Visibility.Hidden: Visibility.Visible;
+            lblH1.Visibility = isTwelveHours ? Visibility.Hidden : Visibility.Visible;
+
+        }
+
+        private void ChkHideNum_Click(object sender, RoutedEventArgs e)
+        {
+            _hideNum ^= true;
+
+            foreach (var lbl in FindLogicalChildren<Label>(mainWindow).Where(lbl => lbl.Name != "lblAMPM"))
+            {
+                lbl.Visibility = _hideNum ? Visibility.Hidden : Visibility.Visible;
+            }
         }
     }
 }
