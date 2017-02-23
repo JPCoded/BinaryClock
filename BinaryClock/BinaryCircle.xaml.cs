@@ -1,6 +1,4 @@
 ﻿#region
-
-using System.Windows.Controls;
 using System.Windows.Media;
 
 #endregion
@@ -8,9 +6,9 @@ using System.Windows.Media;
 namespace BinaryClock
 {
     /// <summary>
-    ///     Interaction logic for BinaryCircle.xaml
+    ///    Custom LED Control
     /// </summary>
-    public partial class BinaryCircle : UserControl
+    public partial class BinaryCircle
     {
         public BinaryCircle()
         {

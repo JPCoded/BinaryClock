@@ -216,9 +216,8 @@
         <CheckBox x:Name="ChkTwelveHour"
                   Margin="300,32,43,0"
                   VerticalAlignment="Top"
-                  Checked="ChkTwelveHour_Checked"
-                  Content="12-Hour"
-                  Unchecked="ChkTwelveHour_Unchecked" />
+                  Click="ChkTwelveHour_Click"
+                  Content="12-Hour" />
         <Label x:Name="lblAMPM"
                Margin="235,13,0,0"
                HorizontalAlignment="Left"
