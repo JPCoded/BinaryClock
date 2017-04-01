@@ -79,7 +79,7 @@ namespace BinaryClock
             // redo most of this to make it just better;
             char[] hour;
 
-            lblAMPM.Visibility =_isTwelveHours ? Visibility.Hidden : Visibility.Visible;
+            lblAMPM.Visibility = _isTwelveHours ? Visibility.Hidden : Visibility.Visible;
             var hourEnum = _isTwelveHours
                 ? _hours.SkipWhile(element => ReferenceEquals(element, CirHour5)).GetEnumerator()
                 : _hours.GetEnumerator();
@@ -87,11 +87,11 @@ namespace BinaryClock
             {
                 lblAMPM.Content = currentHour >= 12 ? "PM" : "AM";
                 currentHour = currentHour > 12 ? currentHour - 12 : currentHour;
-                hour = Convert.ToString(currentHour, 2).PadLeft(4, '0').ToCharArray();
+                hour = ConvertToBinary(currentHour, 4);
             }
             else
             {
-                hour = Convert.ToString(currentHour, 2).PadLeft(5, '0').ToCharArray();
+                hour = ConvertToBinary(currentHour, 5);
             }
 
             foreach (var val in hour)
@@ -103,7 +103,7 @@ namespace BinaryClock
 
         private void CycleMinute(int currentMin)
         {
-            var min = Convert.ToString(currentMin, 2).PadLeft(6, '0').ToCharArray();
+            var min = ConvertToBinary(currentMin,6);
             var minEnum = _minutes.GetEnumerator();
             foreach (var val in min)
             {
@@ -114,13 +114,18 @@ namespace BinaryClock
 
         private void CycleSecond(int currentSec)
         {
-            var sec = Convert.ToString(currentSec, 2).PadLeft(6, '0').ToCharArray();
+            var sec = ConvertToBinary(currentSec, 6);
             var secEnum = _seconds.GetEnumerator();
             foreach (var val in sec)
             {
                 secEnum.MoveNext();
                 secEnum.Current.SetFill = val == '1' ? _radialGradientGreen : _radialGradientBlack;
             }
+        }
+
+        private static char[] ConvertToBinary(int time, int pad)
+        {
+            return Convert.ToString(time, 2).PadLeft(pad, '0').ToCharArray();
         }
 
         private static IEnumerable<T> FindLogicalChildren<T>(DependencyObject obj) where T : DependencyObject
@@ -142,8 +147,6 @@ namespace BinaryClock
             }
         }
 
-
-
         private void ChkHideNum_Click(object sender, RoutedEventArgs e)
         {
             _hideNum ^= true;
@@ -158,7 +161,7 @@ namespace BinaryClock
         {
             _isTwelveHours ^= true;
             CycleHour(DateTime.Now.Hour);
-            CirHour5.Visibility = _isTwelveHours? Visibility.Hidden : Visibility.Visible;
+            CirHour5.Visibility = _isTwelveHours ? Visibility.Hidden : Visibility.Visible;
             lblH1.Visibility = _isTwelveHours ? Visibility.Hidden : Visibility.Visible;
             var startNum = _isTwelveHours ? 1 : 2;
             foreach (var lbl in _hourLabels)
