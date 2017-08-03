@@ -8,7 +8,7 @@ namespace BinaryClock
     /// <summary>
     ///    Custom LED Control
     /// </summary>
-    public partial class BinaryCircle
+    internal sealed partial class BinaryCircle
     {
         public BinaryCircle()
         {
@@ -17,14 +17,14 @@ namespace BinaryClock
 
         public Brush SetFill
         {
-            set { CirMid.Fill = value; }
-            get { return CirMid.Fill; }
+            set => CirMid.Fill = value;
+            get => CirMid.Fill;
         }
 
         public Brush FillRing
         {
-            set { CirOuter.Fill = value; }
-            get { return CirOuter.Fill; }
+            set => CirOuter.Fill = value;
+            get => CirOuter.Fill;
         }
     }
 }

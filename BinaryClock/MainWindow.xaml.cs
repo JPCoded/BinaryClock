@@ -15,7 +15,7 @@ namespace BinaryClock
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    internal sealed partial class MainWindow
     {
         private bool _hideNum;
         private bool _isTwelveHours;
@@ -105,6 +105,7 @@ namespace BinaryClock
         {
             var min = ConvertToBinary(currentMin,6);
             var minEnum = _minutes.GetEnumerator();
+            
             foreach (var val in min)
             {
                 minEnum.MoveNext();
@@ -123,10 +124,7 @@ namespace BinaryClock
             }
         }
 
-        private static char[] ConvertToBinary(int time, int pad)
-        {
-            return Convert.ToString(time, 2).PadLeft(pad, '0').ToCharArray();
-        }
+        private static char[] ConvertToBinary(int time, int pad) => Convert.ToString(time, 2).PadLeft(pad, '0').ToCharArray();
 
         private static IEnumerable<T> FindLogicalChildren<T>(DependencyObject obj) where T : DependencyObject
         {
